@@ -1,12 +1,12 @@
-<!DOCTYPE html>
-<html lang="km">
+[11/5/2026 8:01 AM] សល់ សីហា: <!DOCTYPE html>
+<html lang=“km”>
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta charset=“UTF-8”>
+<meta name=“viewport” content=“width=device-width, initial-scale=1”>
 <title>Trade Journal</title>
 <style>
   *{box-sizing:border-box}
-  body{margin:0;background:#0f172a;color:#fff;font-family:system-ui,"Khmer OS",sans-serif;max-width:480px;margin:auto;padding-bottom:40px}
+  body{margin:0;background:#0f172a;color:#fff;font-family:system-ui,”Khmer OS”,sans-serif;max-width:480px;margin:auto;padding-bottom:40px}
   h1{font-size:18px;padding:16px}
   .tabs{display:flex;gap:8px;padding:0 16px 16px}
   .tabs button{flex:1;padding:10px;border:0;border-radius:8px;background:#1e293b;color:#fff;font-size:14px}
@@ -36,54 +36,57 @@
 </head>
 <body>
 <h1>📒 Trade Journal</h1>
-<div class="tabs">
-  <button id="t-add" class="on">បន្ថែម</button>
-  <button id="t-history">ប្រវត្តិ</button>
-  <button id="t-stats">ស្ថិតិ</button>
+<div class=“tabs”>
+  <button id=“t-add” class=“on”>បន្ថែម</button>
+  <button id=“t-history”>ប្រវត្តិ</button>
+  <button id=“t-stats”>ស្ថិតិ</button>
 </div>
 
-<!-- បន្ថែម -->
-<div id="p-add" class="pad">
-  <label>កាលបរិច្ឆេទ/ម៉ោង<input type="datetime-local" id="date"></label>
-  <div class="row r2">
-    <label>Session<select id="session"><option>Asia</option><option selected>London</option><option>NY</option></select></label>
-    <label>Direction<select id="direction"><option>Buy</option><option>Sell</option></select></label>
+<!— បន្ថែម —>
+<div id=“p-add” class=“pad”>
+  <label>កាលបរិច្ឆេទ/ម៉ោង<input type=“datetime-local” id=“date”></label>
+  <div class=“row r2”>
+    <label>Session<select id=“session”><option>Asia</option><option selected>London</option><option>NY</option></select></label>
+    <label>Direction<select id=“direction”><option>Buy</option><option>Sell</option></select></label>
   </div>
-  <div class="row r4">
-    <label>Entry<input type="number" step="any" inputmode="decimal" id="entry"></label>
-    <label>SL<input type="number" step="any" inputmode="decimal" id="sl"></label>
-    <label>TP<input type="number" step="any" inputmode="decimal" id="tp"></label>
-    <label>Lot<input type="number" step="any" inputmode="decimal" id="lot"></label>
+  <div class=“row r4”>
+    <label>Entry<input type=“number” step=“any” inputmode=“decimal” id=“entry”></label>
+    <label>SL<input type=“number” step=“any” inputmode=“decimal” id=“sl”></label>
+    <label>TP<input type=“number” step=“any” inputmode=“decimal” id=“tp”></label>
+    <label>Lot<input type=“number” step=“any” inputmode=“decimal” id=“lot”></label>
   </div>
-  <div class="row r2">
-    <label>លទ្ធផល<select id="result"><option>Win</option><option selected>Loss</option><option>BE</option></select></label>
-    <label>P/L ($)<input type="number" step="any" inputmode="decimal" id="pl"></label>
-  </div>
-  <label>អារម្មណ៍មុនចូល
-    <select id="emotion"><option>ស្ងប់</option><option>ខឹង</option><option>ចង់ស្រោចស្រង់</option><option>FOMO</option><option>ភ័យ</option></select>
+  <label>P/L ($) <span style=“color:#64748b”>(+ ឈ្នះ, − ខាត)</span>
+    <input type=“number” step=“any” inputmode=“decimal” id=“pl”>
   </label>
-  <label class="chk"><input type="checkbox" id="plan" checked> ធ្វើតាម Trading Plan</label>
-  <div id="tagbox" class="hide">
+  <label>អារម្មណ៍មុនចូល
+    <select id=“emotion”><option>ស្ងប់</option><option>ខឹង</option><option>ចង់ស្រោចស្រង់</option><option>FOMO</option><option>ភ័យ</option></select>
+  </label>
+  <label class=“chk”><input type=“checkbox” id=“plan” checked> ធ្វើតាម Trading Plan</label>
+  <div id=“tagbox” class=“hide”>
     <label>Mistake tags</label>
-    <div class="tags" id="tags"></div>
+    <div class=“tags” id=“tags”></div>
   </div>
-  <label>លើកក្រោយខ្ញុំនឹង...<textarea id="lesson" rows="3"></textarea></label>
-  <button class="save" id="save">រក្សាទុក</button>
+  <label>លើកក្រោយខ្ញុំនឹង...<textarea id=“lesson” rows=“3”></textarea></label>
+  <button class=“save” id=“save”>រក្សាទុក</button>
 </div>
 
-<!-- ប្រវត្តិ -->
-<div id="p-history" class="pad hide"></div>
+<!— ប្រវត្តិ —>
+<div id=“p-history” class=“pad hide”></div>
 
-<!-- ស្ថិតិ -->
-<div id="p-stats" class="pad hide"></div>
+<!— ស្ថិតិ —>
+<div id=“p-stats” class=“pad hide”></div>
 
 <script>
-const TAGS = ["Bias ខុស","ចូលមុន confirmation","ចូលតំបន់ខុស","ប្តូរ SL/TP","ទីតាំងច្រើន/Lot ធំ","Revenge trade","Overtrade","Deposit ថែម","FOMO"];
-const KEY = "trade-journal-v1";
+const TAGS = [“Bias ខុស”,”ចូលមុន confirmation”,”ចូលតំបន់ខុស”,”ប្តូរ SL/TP”,”ទីតាំងច្រើន/Lot ធំ”,”Revenge trade”,”Overtrade”,”Deposit ថែម”,”FOMO”];
+const KEY = “trade-journal-v1”;
 const $ = id => document.getElementById(id);
+const calcResult = pl => pl > 0 ? “Win” : pl < 0 ? “Loss” : “BE”;
 
 let trades = [];
 try { trades = JSON.parse(localStorage.getItem(KEY)) || []; } catch(e) {}
+// ជួសជុល trade ចាស់ ឱ្យ Win/Loss ត្រូវតាម P/L
+trades = trades.map(t => ({...
+[11/5/2026 8:01 AM] សល់ សីហា: t, result: calcResult(t.pl)}));
 let selTags = [];
 
 const persist = () => { try { localStorage.setItem(KEY, JSON.stringify(trades)); } catch(e) {} };
@@ -95,105 +98,106 @@ function nowLocal(){
 
 // Tabs
 function show(tab){
-  ["add","history","stats"].forEach(t=>{
-    $("p-"+t).classList.toggle("hide", t!==tab);
-    $("t-"+t).classList.toggle("on", t===tab);
+  [“add”,”history”,”stats”].forEach(t=>{
+    $(“p-“+t).classList.toggle(“hide”, t!==tab);
+    $(“t-“+t).classList.toggle(“on”, t===tab);
   });
-  if(tab==="history") renderHistory();
-  if(tab==="stats") renderStats();
+  if(tab===“history”) renderHistory();
+  if(tab===“stats”) renderStats();
 }
-["add","history","stats"].forEach(t=> $("t-"+t).onclick = ()=>show(t));
+[“add”,”history”,”stats”].forEach(t=> $(“t-“+t).onclick = ()=>show(t));
 
 // Tags
 function renderTags(){
-  $("tags").innerHTML = "";
+  $(“tags”).innerHTML = “”;
   TAGS.forEach(t=>{
-    const b = document.createElement("button");
-    b.type = "button";
-    b.className = "tag" + (selTags.includes(t) ? " on" : "");
+    const b = document.createElement(“button”);
+    b.type = “button”;
+    b.className = “tag” + (selTags.includes(t) ? “ on” : “”);
     b.textContent = t;
     b.onclick = ()=>{
       selTags = selTags.includes(t) ? selTags.filter(x=>x!==t) : [...selTags,t];
       renderTags();
     };
-    $("tags").appendChild(b);
+    $(“tags”).appendChild(b);
   });
 }
-$("plan").onchange = ()=> $("tagbox").classList.toggle("hide", $("plan").checked);
+$(“plan”).onchange = ()=> $(“tagbox”).classList.toggle(“hide”, $(“plan”).checked);
 
 // Save
-$("save").onclick = ()=>{
+$(“save”).onclick = ()=>{
+  const pl = parseFloat($(“pl”).value) || 0;
   const t = {
     id: Date.now(),
-    date: $("date").value, session: $("session").value, direction: $("direction").value,
-    entry: $("entry").value, sl: $("sl").value, tp: $("tp").value, lot: $("lot").value,
-    result: $("result").value, pl: parseFloat($("pl").value) || 0,
-    emotion: $("emotion").value, followedPlan: $("plan").checked,
-    tags: $("plan").checked ? [] : selTags, lesson: $("lesson").value
+    date: $(“date”).value, session: $(“session”).value, direction: $(“direction”).value,
+    entry: $(“entry”).value, sl: $(“sl”).value, tp: $(“tp”).value, lot: $(“lot”).value,
+    pl: pl, result: calcResult(pl),
+    emotion: $(“emotion”).value, followedPlan: $(“plan”).checked,
+    tags: $(“plan”).checked ? [] : selTags, lesson: $(“lesson”).value
   };
   trades.unshift(t); persist();
-  ["entry","sl","tp","lot","pl","lesson"].forEach(i=>$(i).value="");
-  selTags = []; $("plan").checked = true; $("tagbox").classList.add("hide");
-  $("date").value = nowLocal(); renderTags();
-  show("history");
+  [“entry”,”sl”,”tp”,”lot”,”pl”,”lesson”].forEach(i=>$(i).value=“”);
+  selTags = []; $(“plan”).checked = true; $(“tagbox”).classList.add(“hide”);
+  $(“date”).value = nowLocal(); renderTags();
+  show(“history”);
 };
 
 // History
 function renderHistory(){
-  const box = $("p-history");
-  if(!trades.length){ box.innerHTML = '<p class="sub" style="text-align:center;padding:32px">មិនទាន់មាន trade</p>'; return; }
+  const box = $(“p-history”);
+  if(!trades.length){ box.innerHTML = ‘<p class=“sub” style=“text-align:center;padding:32px”>មិនទាន់មាន trade</p>’; return; }
   box.innerHTML = trades.map(t=>`
-    <div class="card">
-      <div class="top">
-        <span><b class="${t.direction==="Buy"?"b":"r"}">${t.direction}</b> · ${t.session} · ${t.date.replace("T"," ")}</span>
-        <b class="${t.pl>=0?"g":"r"}">${t.pl>=0?"+":""}${t.pl}</b>
+    <div class=“card”>
+      <div class=“top”>
+        <span><b class=“${t.direction===“Buy”?”b”:”r”}”>${t.direction}</b> · ${t.session} · ${t.date.replace(“T”,” “)}</span>
+        <b class=“${t.pl>=0?”g”:”r”}”>${t.pl>=0?”+”:””}${t.pl}</b>
       </div>
-      <div class="sub">Entry ${t.entry||"-"} · SL ${t.sl||"-"} · TP ${t.tp||"-"} · Lot ${t.lot||"-"} · ${t.emotion}</div>
-      <div style="margin-top:4px">${t.followedPlan?"✅ តាម Plan":"❌ មិនតាម Plan"}</div>
-      ${t.tags.length?`<div class="r sub">${t.tags.join(" · ")}</div>`:""}
-      ${t.lesson?`<div style="margin-top:4px">📝 ${esc(t.lesson)}</div>`:""}
-      <button class="del" onclick="del(${t.id})">លុប</button>
-    </div>`).join("")
-    + '<button class="save" style="background:#334155" onclick="exportCSV()">⬇️ Export CSV</button>';
+      <div class=“sub”>Entry ${t.entry||”-“} · SL ${t.sl||”-“} · TP ${t.tp||”-“} · Lot ${t.lot||”-“} · ${t.emotion}</div>
+      <div style=“margin-top:4px”>${t.result===“Win”?”🟢 Win”:t.result===“Loss”?”🔴 Loss”:”⚪ BE”} · ${t.followedPlan?”✅ តាម Plan”:”❌ មិនតាម Plan”}</div>
+      ${t.tags.length?`<div class=“r sub”>${t.tags.join(“ · “)}</div>`:””}
+      ${t.lesson?`<div style=“margin-top:4px”>📝 ${esc(t.lesson)}</div>`:””}
+      <button class=“del” onclick=“del(${t.id})”>លុប</button>
+    </div>`).join(“”)
+    + ‘<button class=“save” style=“background:#334155” onclick=“exportCSV()”>⬇️ Export CSV</button>’;
 }
-function esc(s){ return s.replace(/[&<>"]/g, c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c])); }
-function del(id){ if(confirm("លុប trade នេះ?")){ trades = trades.filter(t=>t.id!==id); persist(); renderHistory(); } }
+function esc(s){ return String(s).replace(/[&<>”]/g, c=>({“&”:”&amp;”,”<“:”&lt;”,”>”:”&gt;”,’”’:”&quot;”}[c])); }
+function del(id){ if(confirm(“លុប trade នេះ?”)){ trades = trades.filter(t=>t.id!==id); persist(); renderHistory(); } }
 
 // Stats
 function renderStats(){
   const n = trades.length;
   const pct = x => n ? Math.round(x/n*100) : 0;
-  const wins = trades.filter(t=>t.result==="Win").length;
+  const wins = trades.filter(t=>t.result===“Win”).length;
   const fol = trades.filter(t=>t.followedPlan).length;
   const pl = trades.reduce((s,t)=>s+t.pl,0);
   const cnt = {};
   trades.forEach(t=>{ if(!t.followedPlan) t.tags.forEach(g=>cnt[g]=(cnt[g]||0)+1); });
   const top = Object.entries(cnt).sort((a,b)=>b[1]-a[1]);
-  $("p-stats").innerHTML = `
-    <div class="grid">
-      <div class="card"><div class="sub">Trade សរុប</div><div class="big">${n}</div></div>
-      <div class="card"><div class="sub">Win rate</div><div class="big">${pct(wins)}%</div></div>
-      <div class="card"><div class="sub">តាម Plan</div><div class="big">${pct(fol)}%</div></div>
-      <div class="card"><div class="sub">P/L សរុប</div><div class="big ${pl>=0?"g":"r"}">${pl.toFixed(2)}</div></div>
+  $(“p-stats”).innerHTML = `
+    <div class=“grid”>
+      <div class=“card”><div class=“sub”>Trade សរុប</div><div class=“big”>${n}</div></div>
+      <div class=“card”><div class=“sub”>Win rate</div><div class=“big”>${pct(wins)}%</div></div>
+      <div class=“card”><div class=“sub”>តាម Plan</div><div class=“big”>${pct(fol)}%</div></div>
+      <div class=“card”><div class=“sub”>P/L សរុប</div><div class=“big ${pl>=0?”g”:”r”}”>${pl.toFixed(2)}</div></div>
     </div>
-    <div class="card">
-      <div class="sub" style="margin-bottom:8px">កំហុសកើតច្រើនបំផុត</div>
-      ${top.length ? top.map(([t,c],i)=>`<div class="top" style="padding:4px 0"><span>${i===0?"🔥 ":""}${t}</span><b>${c}</b></div>`).join("") : "មិនទាន់មាន"}
+    <div class=“card”>
+[11/5/2026 8:01 AM] សល់ សីហា: <div class=“sub” style=“margin-bottom:8px”>កំហុសកើតច្រើនបំផុត</div>
+      ${top.length ? top.map(([t,c],i)=>`<div class=“top” style=“padding:4px 0”><span>${i===0?”🔥 “:””}${t}</span><b>${c}</b></div>`).join(“”) : “មិនទាន់មាន”}
     </div>
-    <div class="sub">ចំណាំ៖ រាប់តែ tag ពី trade ដែលមិនតាម Plan។</div>`;
+    <div class=“sub”>ចំណាំ៖ រាប់តែ tag ពី trade ដែលមិនតាម Plan។</div>`;
 }
 
 // Export CSV
 function exportCSV(){
-  const head = ["date","session","direction","entry","sl","tp","lot","result","pl","emotion","followedPlan","tags","lesson"];
-  const q = v => '"' + String(v).replace(/"/g,'""') + '"';
-  const rows = trades.map(t => head.map(h => q(h==="tags" ? t.tags.join("|") : t[h])).join(","));
-  const blob = new Blob(["\ufeff" + [head.join(","), ...rows].join("\n")], {type:"text/csv"});
-  const a = document.createElement("a");
-  a.href = URL.createObjectURL(blob); a.download = "trade-journal.csv"; a.click();
+  const head = [“date”,”session”,”direction”,”entry”,”sl”,”tp”,”lot”,”result”,”pl”,”emotion”,”followedPlan”,”tags”,”lesson”];
+  const q = v => ‘”’ + String(v).replace(/“/g,’””’) + ‘”’;
+  const rows = trades.map(t => head.map(h => q(h===“tags” ? t.tags.join(“|”) : t[h])).join(“,”));
+  const blob = new Blob([“\ufeff” + [head.join(“,”), ...rows].join(“\n”)], {type:”text/csv”});
+  const a = document.createElement(“a”);
+  a.href = URL.createObjectURL(blob); a.download = “trade-journal.csv”; a.click();
 }
 
-$("date").value = nowLocal();
+$(“date”).value = nowLocal();
 renderTags();
 </script>
 </body>
