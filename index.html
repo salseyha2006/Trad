@@ -14,6 +14,7 @@
   .pad{padding:0 16px}
   label{display:block;font-size:12px;color:#94a3b8;margin-bottom:12px}
   input,select,textarea{width:100%;margin-top:4px;padding:10px;border-radius:8px;border:1px solid #334155;background:#1e293b;color:#fff;font-size:14px}
+  input[type=datetime-local]{min-width:0;max-width:100%;-webkit-appearance:none;appearance:none;display:block;text-align:left;height:42px}
   .row{display:grid;gap:8px}
   .r2{grid-template-columns:1fr 1fr}
   .r4{grid-template-columns:repeat(4,1fr)}
@@ -22,6 +23,12 @@
   .tags{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:12px}
   .tag{padding:6px 12px;border-radius:99px;border:1px solid #475569;background:none;color:#cbd5e1;font-size:12px}
   .tag.on{background:#dc2626;border-color:#dc2626;color:#fff}
+  .res{display:flex;gap:8px;margin:4px 0 12px}
+  .res button{flex:1;padding:12px;border-radius:8px;border:1px solid #475569;background:none;color:#cbd5e1;font-size:14px}
+  .res button.win.on{background:#059669;border-color:#059669;color:#fff}
+  .res button.loss.on{background:#dc2626;border-color:#dc2626;color:#fff}
+  .res button.be.on{background:#475569;border-color:#475569;color:#fff}
+  .preview{padding:10px;border-radius:8px;background:#1e293b;font-size:15px;font-weight:600;text-align:center;margin-bottom:12px}
   .save{width:100%;padding:14px;border:0;border-radius:8px;background:#059669;color:#fff;font-weight:600;font-size:15px}
   .card{background:#1e293b;border-radius:12px;padding:12px;margin-bottom:12px;font-size:14px}
   .top{display:flex;justify-content:space-between}
@@ -55,9 +62,19 @@
     <label>TP<input type="number" step="any" inputmode="decimal" id="tp"></label>
     <label>Lot<input type="number" step="any" inputmode="decimal" id="lot"></label>
   </div>
-  <label>P/L ($) <span style="color:#64748b">(+ ឈ្នះ, − ខាត)</span>
-    <input type="number" step="any" inputmode="decimal" id="pl">
+
+  <label>លទ្ធផល</label>
+  <div class="res">
+    <button type="button" class="win" data-r="Win">🟢 ឈ្នះ</button>
+    <button type="button" class="loss" data-r="Loss">🔴 ខាត</button>
+    <button type="button" class="be" data-r="BE">⚪ BE</button>
+  </div>
+
+  <label>ចំនួនទឹកប្រាក់ ($) <span style="color:#64748b">(វាយតែលេខ មិនបាច់ដាក់ +/−)</span>
+    <input type="number" step="any" inputmode="decimal" id="pl" min="0">
   </label>
+  <div class="preview" id="preview">ជ្រើសលទ្ធផលខាងលើ</div>
+
   <label>អារម្មណ៍មុនចូល
     <select id="emotion"><option>ស្ងប់</option><option>ខឹង</option><option>ចង់ស្រោចស្រង់</option><option>FOMO</option><option>ភ័យ</option></select>
   </label>
@@ -84,9 +101,9 @@ const calcResult = pl => pl > 0 ? "Win" : pl < 0 ? "Loss" : "BE";
 
 let trades = [];
 try { trades = JSON.parse(localStorage.getItem(KEY)) || []; } catch(e) {}
-// ជួសជុល trade ចាស់ ឱ្យ Win/Loss ត្រូវតាម P/L
 trades = trades.map(t => ({...t, result: calcResult(t.pl)}));
 let selTags = [];
+let resultSel = null;
 
 const persist = () => { try { localStorage.setItem(KEY, JSON.stringify(trades)); } catch(e) {} };
 
@@ -105,6 +122,27 @@ function show(tab){
   if(tab==="stats") renderStats();
 }
 ["add","history","stats"].forEach(t=> $("t-"+t).onclick = ()=>show(t));
+
+// Result buttons + live preview
+function finalPL(){
+  const amt = Math.abs(parseFloat($("pl").value) || 0);
+  return resultSel === "Win" ? amt : resultSel === "Loss" ? -amt : 0;
+}
+function updatePreview(){
+  document.querySelectorAll(".res button").forEach(b=>{
+    b.classList.toggle("on", b.dataset.r === resultSel);
+  });
+  const p = $("preview");
+  if(!resultSel){ p.textContent = "ជ្រើសលទ្ធផលខាងលើ"; p.className = "preview"; return; }
+  const v = finalPL();
+  if(resultSel === "Win"){ p.textContent = "🟢 ឈ្នះ +" + v.toFixed(2) + " $"; p.className = "preview g"; }
+  else if(resultSel === "Loss"){ p.textContent = "🔴 ខាត " + v.toFixed(2) + " $"; p.className = "preview r"; }
+  else { p.textContent = "⚪ BE 0.00 $"; p.className = "preview"; }
+}
+document.querySelectorAll(".res button").forEach(b=>{
+  b.onclick = ()=>{ resultSel = b.dataset.r; updatePreview(); };
+});
+$("pl").oninput = updatePreview;
 
 // Tags
 function renderTags(){
@@ -125,19 +163,21 @@ $("plan").onchange = ()=> $("tagbox").classList.toggle("hide", $("plan").checked
 
 // Save
 $("save").onclick = ()=>{
-  const pl = parseFloat($("pl").value) || 0;
+  if(!resultSel){ alert("សូមជ្រើស ឈ្នះ / ខាត / BE ជាមុន"); return; }
+  const pl = finalPL();
   const t = {
     id: Date.now(),
     date: $("date").value, session: $("session").value, direction: $("direction").value,
     entry: $("entry").value, sl: $("sl").value, tp: $("tp").value, lot: $("lot").value,
-    pl: pl, result: calcResult(pl),
+    pl: pl, result: resultSel,
     emotion: $("emotion").value, followedPlan: $("plan").checked,
     tags: $("plan").checked ? [] : selTags, lesson: $("lesson").value
   };
   trades.unshift(t); persist();
   ["entry","sl","tp","lot","pl","lesson"].forEach(i=>$(i).value="");
-  selTags = []; $("plan").checked = true; $("tagbox").classList.add("hide");
-  $("date").value = nowLocal(); renderTags();
+  selTags = []; resultSel = null;
+  $("plan").checked = true; $("tagbox").classList.add("hide");
+  $("date").value = nowLocal(); renderTags(); updatePreview();
   show("history");
 };
 
@@ -149,10 +189,10 @@ function renderHistory(){
     <div class="card">
       <div class="top">
         <span><b class="${t.direction==="Buy"?"b":"r"}">${t.direction}</b> · ${t.session} · ${t.date.replace("T"," ")}</span>
-        <b class="${t.pl>=0?"g":"r"}">${t.pl>=0?"+":""}${t.pl}</b>
+        <b class="${t.pl>=0?"g":"r"}">${t.pl>0?"+":""}${t.pl}</b>
       </div>
       <div class="sub">Entry ${t.entry||"-"} · SL ${t.sl||"-"} · TP ${t.tp||"-"} · Lot ${t.lot||"-"} · ${t.emotion}</div>
-      <div style="margin-top:4px">${t.result==="Win"?"🟢 Win":t.result==="Loss"?"🔴 Loss":"⚪ BE"} · ${t.followedPlan?"✅ តាម Plan":"❌ មិនតាម Plan"}</div>
+      <div style="margin-top:4px">${t.result==="Win"?"🟢 ឈ្នះ":t.result==="Loss"?"🔴 ខាត":"⚪ BE"} · ${t.followedPlan?"✅ តាម Plan":"❌ មិនតាម Plan"}</div>
       ${t.tags.length?`<div class="r sub">${t.tags.join(" · ")}</div>`:""}
       ${t.lesson?`<div style="margin-top:4px">📝 ${esc(t.lesson)}</div>`:""}
       <button class="del" onclick="del(${t.id})">លុប</button>
@@ -198,6 +238,7 @@ function exportCSV(){
 
 $("date").value = nowLocal();
 renderTags();
+updatePreview();
 </script>
 </body>
 </html>
