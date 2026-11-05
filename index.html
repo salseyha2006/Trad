@@ -7,7 +7,10 @@
 <style>
   *{box-sizing:border-box}
   body{margin:0;background:#0f172a;color:#fff;font-family:system-ui,"Khmer OS",sans-serif;max-width:480px;margin:auto;padding-bottom:40px}
-  h1{font-size:18px;padding:16px}
+  h1{font-size:18px;padding:16px 16px 8px;margin:0}
+  .nav{display:flex;gap:8px;padding:8px 16px 16px;position:sticky;top:0;background:#0f172a;z-index:5}
+  .nav button{flex:1;padding:12px;border:0;border-radius:10px;background:#1e293b;color:#cbd5e1;font-size:15px;font-weight:600}
+  .nav button.on{background:#059669;color:#fff}
   .tabs{display:flex;gap:8px;padding:0 16px 16px}
   .tabs button{flex:1;padding:10px;border:0;border-radius:8px;background:#1e293b;color:#fff;font-size:14px}
   .tabs button.on{background:#059669}
@@ -33,67 +36,199 @@
   .card{background:#1e293b;border-radius:12px;padding:12px;margin-bottom:12px;font-size:14px}
   .top{display:flex;justify-content:space-between}
   .sub{color:#94a3b8;font-size:12px;margin-top:4px}
-  .g{color:#34d399}.r{color:#f87171}.b{color:#60a5fa}
+  .g{color:#34d399}.r{color:#f87171}.b{color:#60a5fa}.y{color:#fbbf24}
   .grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px}
   .grid .card{margin:0}
   .big{font-size:22px;font-weight:700}
   .del{background:none;border:0;color:#64748b;font-size:12px;padding:8px 0 0}
   .hide{display:none}
+
+  /* ទំព័រវិន័យ */
+  .banner{padding:14px;border-radius:12px;font-size:16px;font-weight:700;text-align:center;margin-bottom:12px}
+  .banner small{display:block;font-weight:400;font-size:12px;margin-top:4px;opacity:.9}
+  .banner.red{background:#7f1d1d;border:2px solid #dc2626}
+  .banner.green{background:#064e3b;border:2px solid #059669}
+  .banner.amber{background:#78350f;border:2px solid #d97706}
+  .kgrid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:12px}
+  .kcard{background:#1e293b;border:1px solid #334155;border-radius:10px;padding:10px 6px;text-align:center}
+  .kcard .v{font-size:18px;font-weight:800;color:#fbbf24}
+  .kcard .l{font-size:11px;color:#94a3b8;margin-top:2px}
+  .danger{background:#450a0a;border:2px solid #dc2626;border-radius:12px;padding:12px;margin-bottom:12px}
+  .danger h3{margin:0 0 8px;font-size:15px;color:#fca5a5}
+  .danger li{margin:6px 0;font-size:14px;color:#fecaca}
+  ul{padding-left:18px;margin:0}
+  .ck{display:flex;align-items:center;gap:10px;padding:12px;margin-bottom:8px;border-radius:10px;background:#0f172a;border:1px solid #334155;font-size:14px;cursor:pointer;user-select:none}
+  .ck.on{background:#064e3b;border-color:#059669}
+  .ck .box{width:22px;height:22px;border-radius:6px;border:2px solid #64748b;display:flex;align-items:center;justify-content:center;flex:none;font-size:14px}
+  .ck.on .box{background:#059669;border-color:#059669}
+  .ckhead{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;font-weight:700}
+  .reset{background:none;border:1px solid #475569;color:#cbd5e1;border-radius:8px;padding:4px 10px;font-size:12px}
+  details{background:#1e293b;border-radius:12px;padding:12px;margin-bottom:10px}
+  summary{font-weight:700;font-size:14px;cursor:pointer}
+  details ul{margin-top:8px}
+  details li{margin:6px 0;font-size:13px;color:#cbd5e1}
 </style>
 </head>
 <body>
 <h1>📒 Trade Journal</h1>
-<div class="tabs">
-  <button id="t-add" class="on">បន្ថែម</button>
-  <button id="t-history">ប្រវត្តិ</button>
-  <button id="t-stats">ស្ថិតិ</button>
+<div class="nav">
+  <button id="n-rules" class="on">📜 វិន័យ</button>
+  <button id="n-journal">📒 Journal</button>
 </div>
 
-<!-- បន្ថែម -->
-<div id="p-add" class="pad">
-  <label>កាលបរិច្ឆេទ/ម៉ោង<input type="datetime-local" id="date"></label>
-  <div class="row r2">
-    <label>Session<select id="session"><option>Asia</option><option selected>London</option><option>NY</option></select></label>
-    <label>Direction<select id="direction"><option>Buy</option><option>Sell</option></select></label>
-  </div>
-  <div class="row r4">
-    <label>Entry<input type="number" step="any" inputmode="decimal" id="entry"></label>
-    <label>SL<input type="number" step="any" inputmode="decimal" id="sl"></label>
-    <label>TP<input type="number" step="any" inputmode="decimal" id="tp"></label>
-    <label>Lot<input type="number" step="any" inputmode="decimal" id="lot"></label>
+<!-- ===== ទំព័រ ១៖ វិន័យ ===== -->
+<div id="page-rules" class="pad">
+  <div id="banner" class="banner"></div>
+
+  <div class="kgrid" id="kgrid"></div>
+
+  <div class="card" id="today"></div>
+
+  <div class="danger">
+    <h3>🚫 ច្បាប់ហាម (បំពានមួយ = ឈប់ថ្ងៃនោះ)</h3>
+    <ul id="forbid"></ul>
   </div>
 
-  <label>លទ្ធផល</label>
-  <div class="res">
-    <button type="button" class="win" data-r="Win">🟢 ឈ្នះ</button>
-    <button type="button" class="loss" data-r="Loss">🔴 ខាត</button>
-    <button type="button" class="be" data-r="BE">⚪ BE</button>
+  <div class="card">
+    <div class="ckhead">
+      <span>✅ Checklist មុនដាក់ order <span id="ckcount" class="y"></span></span>
+      <button class="reset" id="ckreset">Reset</button>
+    </div>
+    <div id="cklist"></div>
   </div>
 
-  <label>ចំនួនទឹកប្រាក់ ($) <span style="color:#64748b">(វាយតែលេខ មិនបាច់ដាក់ +/−)</span>
-    <input type="number" step="any" inputmode="decimal" id="pl" min="0">
-  </label>
-  <div class="preview" id="preview">ជ្រើសលទ្ធផលខាងលើ</div>
+  <div id="details"></div>
 
-  <label>អារម្មណ៍មុនចូល
-    <select id="emotion"><option>ស្ងប់</option><option>ខឹង</option><option>ចង់ស្រោចស្រង់</option><option>FOMO</option><option>ភ័យ</option></select>
-  </label>
-  <label class="chk"><input type="checkbox" id="plan" checked> ធ្វើតាម Trading Plan</label>
-  <div id="tagbox" class="hide">
-    <label>Mistake tags</label>
-    <div class="tags" id="tags"></div>
-  </div>
-  <label>លើកក្រោយខ្ញុំនឹង...<textarea id="lesson" rows="3"></textarea></label>
-  <button class="save" id="save">រក្សាទុក</button>
+  <button class="save" id="go">✅ ខ្ញុំអានហើយ → ចូល Journal</button>
 </div>
 
-<!-- ប្រវត្តិ -->
-<div id="p-history" class="pad hide"></div>
+<!-- ===== ទំព័រ ២៖ Journal ===== -->
+<div id="page-journal" class="hide">
+  <div class="tabs">
+    <button id="t-add" class="on">បន្ថែម</button>
+    <button id="t-history">ប្រវត្តិ</button>
+    <button id="t-stats">ស្ថិតិ</button>
+  </div>
 
-<!-- ស្ថិតិ -->
-<div id="p-stats" class="pad hide"></div>
+  <!-- បន្ថែម -->
+  <div id="p-add" class="pad">
+    <label>កាលបរិច្ឆេទ/ម៉ោង<input type="datetime-local" id="date"></label>
+    <div class="row r2">
+      <label>Session<select id="session"><option>Asia</option><option selected>London</option><option>NY</option></select></label>
+      <label>Direction<select id="direction"><option>Buy</option><option>Sell</option></select></label>
+    </div>
+    <div class="row r4">
+      <label>Entry<input type="number" step="any" inputmode="decimal" id="entry"></label>
+      <label>SL<input type="number" step="any" inputmode="decimal" id="sl"></label>
+      <label>TP<input type="number" step="any" inputmode="decimal" id="tp"></label>
+      <label>Lot<input type="number" step="any" inputmode="decimal" id="lot"></label>
+    </div>
+
+    <label>លទ្ធផល</label>
+    <div class="res">
+      <button type="button" class="win" data-r="Win">🟢 ឈ្នះ</button>
+      <button type="button" class="loss" data-r="Loss">🔴 ខាត</button>
+      <button type="button" class="be" data-r="BE">⚪ BE</button>
+    </div>
+
+    <label>ចំនួនទឹកប្រាក់ ($) <span style="color:#64748b">(វាយតែលេខ មិនបាច់ដាក់ +/−)</span>
+      <input type="number" step="any" inputmode="decimal" id="pl" min="0">
+    </label>
+    <div class="preview" id="preview">ជ្រើសលទ្ធផលខាងលើ</div>
+
+    <label>អារម្មណ៍មុនចូល
+      <select id="emotion"><option>ស្ងប់</option><option>ខឹង</option><option>ចង់ស្រោចស្រង់</option><option>FOMO</option><option>ភ័យ</option></select>
+    </label>
+    <label class="chk"><input type="checkbox" id="plan" checked> ធ្វើតាម Trading Plan</label>
+    <div id="tagbox" class="hide">
+      <label>Mistake tags</label>
+      <div class="tags" id="tags"></div>
+    </div>
+    <label>លើកក្រោយខ្ញុំនឹង...<textarea id="lesson" rows="3"></textarea></label>
+    <button class="save" id="save">រក្សាទុក</button>
+  </div>
+
+  <!-- ប្រវត្តិ -->
+  <div id="p-history" class="pad hide"></div>
+
+  <!-- ស្ថិតិ -->
+  <div id="p-stats" class="pad hide"></div>
+</div>
 
 <script>
+/* ===== ការកំណត់ (កែលេខនៅទីនេះ) ===== */
+const LIMITS = { risk:10, dailyLoss:10, maxTrades:1, lot:"0.01", rr:"1:2", maxSL:10 };
+
+const KEY_ = [
+  ["$"+LIMITS.risk, "ហានិភ័យ/trade"],
+  ["$"+LIMITS.dailyLoss, "ខាតអតិបរមា/ថ្ងៃ"],
+  [LIMITS.maxTrades, "Trade/ថ្ងៃ"],
+  ["≥ "+LIMITS.rr, "RR អប្បបរមា"],
+  [LIMITS.lot, "Lot"],
+  ["≤ $"+LIMITS.maxSL, "SL អតិបរមា"]
+];
+
+const FORBID = [
+  "មិនដេញតម្លៃ ឬចូលលើ candle ដែលកំពុងរត់ខ្លាំង",
+  "មិន revenge trade ឬចូលភ្លាមបន្ទាប់ពីខាត",
+  "មិន average ទល់ទិស មិនបង្កើន lot ដើម្បីសង",
+  "មិនចូលដោយគ្មាន SL",
+  "មិនបន្ថែមលុយចូលគណនីដើម្បីសងខាត",
+  "មិនចូលដោយសារ FOMO (\"ខ្លាចខកខាន\")",
+  "មិនសម្រេចចិត្តដោយ screenshot ដែលមាន lag។ ប្រើ pending order"
+];
+
+const CHECK = [
+  "ទិស 1h ស្រប ឬខ្ញុំយល់ថាជា counter-trend",
+  "មាន body-close trigger",
+  "តំបន់ retest ច្បាស់",
+  "SL ≤ $"+LIMITS.maxSL+" ហើយ RR ≥ "+LIMITS.rr,
+  "lot "+LIMITS.lot+" ពិតក្នុង MT5",
+  "គ្មាន news ជិតៗ",
+  "ខាតថ្ងៃនេះមិនទាន់ដល់ $"+LIMITS.dailyLoss,
+  "ខ្ញុំស្ងប់ មិនកំពុងចង់សង"
+];
+
+const DETAILS = [
+  ["១. ទីផ្សារ និងម៉ោង", [
+    "Pair តែមួយ៖ XAUUSD។ 1h កំណត់ទិស, 5m សម្រាប់ចូល",
+    "ម៉ោងសំខាន់៖ London (≈07:00–11:00 UTC) និង New York (≈13:00–16:00 UTC)",
+    "Asian session (liquidity ទាប ងាយ fake move)៖ trade តែពេល setup ពេញលក្ខខណ្ឌទាំងអស់",
+    "មិនចូលមុន/ក្រោយ news ធំ ១៥ នាទី។ ពិនិត្យ economic calendar រាល់ព្រឹក"]],
+  ["២. ទិសដៅ (Bias)", [
+    "មើល 1h ជាមុន៖ BOS/CHoCH ចុងក្រោយ និងតម្លៃនៅ premium ឬ discount",
+    "Sell ត្រូវនៅ premium, Buy ត្រូវនៅ discount",
+    "ទល់ទិស 1h (counter-trend)៖ ត្រូវមាន confirmation ច្រើនជាងធម្មតា ១ ចំណុច"]],
+  ["៣. និយមន័យ Setup", [
+    "តំបន់៖ OB, FVG, IFVG, liquidity sweep ក្នុងតំបន់ដែលមានន័យ (មិនមែនកណ្តាលទីរាប)",
+    "Confirmation ត្រូវជា body close ជានិច្ច។ Wick តែម្យ៉ាងមិនរាប់ជា BOS ឬ CHoCH",
+    "Wick sweep + rejection ជាសញ្ញាចាប់អារម្មណ៍ មិនមែន trigger"]],
+  ["៤. Trigger និងការចូល (retest)", [
+    "(១) body close បញ្ជាក់ CHoCH/BOS → (២) កំណត់តំបន់ retest (OB/FVG/IFVG) → (៣) ដាក់ Limit ឬ Stop ព្រមទាំង SL/TP",
+    "ដាក់ order ភ្លាមពេល trigger កើត មិនចាំអ្នកផ្សេងបញ្ជាក់",
+    "បើតម្លៃមិន retest ហើយធ្លាក់ផ្ទាល់ → មិនដេញ ចាំ setup ថ្មី",
+    "Order មាន expiry ១–២ ម៉ោង ហើយលុបចោលបើ setup ផុតសុពលភាព"]],
+  ["៥. Invalidation និង SL", [
+    "កំណត់មុនចូល៖ SL ដាក់លើ/ក្រោម wick ទាំងអស់ + buffer ~$1",
+    "SL មិនឆ្ងាយជាង $"+LIMITS.maxSL+"។ បើ SL ត្រឹមត្រូវ តែលើស → មិនចូល",
+    "បន្ទាប់ពីចូល មិនរំកិល SL ឆ្ងាយ មិនដកចេញ។ អាចរំកិលទៅ breakeven ប៉ុណ្ណោះ"]],
+  ["៦. TP និង RR", [
+    "RR អប្បបរមា "+LIMITS.rr+" ដោយគិតពី entry ពិត",
+    "TP1 នៅ liquidity/low ជិតបំផុត → partial ៥០% ហើយរំកិល SL ទៅ breakeven",
+    "TP2 នៅតំបន់បន្ទាប់ (OB/FVG ធំ)",
+    "ឧទាហរណ៍៖ ហានិភ័យ $"+LIMITS.risk+" → TP យ៉ាងតិច $"+(LIMITS.risk*2)]],
+  ["៧. គ្រប់គ្រងហានិភ័យ", [
+    "ហានិភ័យអតិបរមា $"+LIMITS.risk+" ក្នុងមួយ trade",
+    "ខាតប្រចាំថ្ងៃដល់ $"+LIMITS.dailyLoss+" → បិទ chart ទាំងមូលថ្ងៃនោះ",
+    "Trade អតិបរមា "+LIMITS.maxTrades+" ក្នុងមួយថ្ងៃ",
+    "មួយ position ក្នុងមួយពេល។ មិនមាន Buy និង Sell ព្រមគ្នា",
+    "មុនចុចរាល់ពេល ពិនិត្យ lot ក្នុង MT5 ជា "+LIMITS.lot]],
+  ["១០. Journal", [
+    "កត់៖ ម៉ោង, ទិស, setup, trigger, entry/SL/TP, លទ្ធផល, អារម្មណ៍, ធ្វើតាមវិន័យឬអត់",
+    "កត់ផងដែរ \"setup valid តែមិនបានចូល\" ព្រោះវាជាទិន្នន័យ មិនមែនការខាត",
+    "ពិនិត្យរាល់ ១០–២០ trade៖ win rate, RR ជាមធ្យម, trade ដែលបំពានវិន័យ"]]
+];
+
 const TAGS = ["Bias ខុស","ចូលមុន confirmation","ចូលតំបន់ខុស","ប្តូរ SL/TP","ទីតាំងច្រើន/Lot ធំ","Revenge trade","Overtrade","Deposit ថែម","FOMO"];
 const KEY = "trade-journal-v1";
 const $ = id => document.getElementById(id);
@@ -104,6 +239,7 @@ try { trades = JSON.parse(localStorage.getItem(KEY)) || []; } catch(e) {}
 trades = trades.map(t => ({...t, result: calcResult(t.pl)}));
 let selTags = [];
 let resultSel = null;
+let checked = new Set();
 
 const persist = () => { try { localStorage.setItem(KEY, JSON.stringify(trades)); } catch(e) {} };
 
@@ -112,7 +248,20 @@ function nowLocal(){
   return d.toISOString().slice(0,16);
 }
 
-// Tabs
+/* ===== ទំព័រ (វិន័យ / Journal) ===== */
+function showPage(p){
+  $("page-rules").classList.toggle("hide", p!=="rules");
+  $("page-journal").classList.toggle("hide", p!=="journal");
+  $("n-rules").classList.toggle("on", p==="rules");
+  $("n-journal").classList.toggle("on", p==="journal");
+  if(p==="rules") renderRules();
+  window.scrollTo(0,0);
+}
+$("n-rules").onclick = ()=>showPage("rules");
+$("n-journal").onclick = ()=>showPage("journal");
+$("go").onclick = ()=>{ show("add"); showPage("journal"); };
+
+/* ===== Journal subtabs ===== */
 function show(tab){
   ["add","history","stats"].forEach(t=>{
     $("p-"+t).classList.toggle("hide", t!==tab);
@@ -123,7 +272,61 @@ function show(tab){
 }
 ["add","history","stats"].forEach(t=> $("t-"+t).onclick = ()=>show(t));
 
-// Result buttons + live preview
+/* ===== ទំព័រវិន័យ ===== */
+function todayStats(){
+  const day = nowLocal().slice(0,10);
+  const list = trades.filter(t => (t.date||"").slice(0,10) === day);
+  const pl = list.reduce((s,t)=>s+t.pl,0);
+  return { count:list.length, pl };
+}
+
+function renderRules(){
+  const s = todayStats();
+  const stopLoss = s.pl <= -LIMITS.dailyLoss;
+  const stopCount = s.count >= LIMITS.maxTrades;
+  const ready = checked.size === CHECK.length;
+  const b = $("banner");
+  if(stopLoss || stopCount){
+    b.className = "banner red";
+    b.innerHTML = "⛔ ឈប់ថ្ងៃនេះ<small>" + (stopLoss ? "ខាតដល់កំណត់ប្រចាំថ្ងៃហើយ" : "Trade ដល់កំណត់ប្រចាំថ្ងៃហើយ") + " · បិទ chart</small>";
+  } else if(ready){
+    b.className = "banner green";
+    b.innerHTML = "🟢 READY<small>Checklist គ្រប់ ✅ អាចដាក់ order តាមផែនការ</small>";
+  } else {
+    b.className = "banner amber";
+    b.innerHTML = "🟡 មិនទាន់គ្រប់ Checklist<small>កុំដាក់ order មុនគ្រប់ " + CHECK.length + " ចំណុច</small>";
+  }
+
+  $("kgrid").innerHTML = KEY_.map(([v,l])=>`<div class="kcard"><div class="v">${v}</div><div class="l">${l}</div></div>`).join("");
+
+  $("today").innerHTML = `
+    <div class="top"><span>📅 ថ្ងៃនេះ</span><b>${s.count}/${LIMITS.maxTrades} trade</b></div>
+    <div class="top" style="margin-top:6px"><span>P/L</span><b class="${s.pl>=0?"g":"r"}">${s.pl>0?"+":""}${s.pl.toFixed(2)} $ <span class="sub">(ដែនកំណត់ -${LIMITS.dailyLoss} $)</span></b></div>`;
+
+  $("forbid").innerHTML = FORBID.map(x=>`<li>${x}</li>`).join("");
+
+  $("ckcount").textContent = checked.size + "/" + CHECK.length;
+  $("cklist").innerHTML = CHECK.map((c,i)=>`
+    <div class="ck ${checked.has(i)?"on":""}" data-i="${i}">
+      <div class="box">${checked.has(i)?"✓":""}</div><div>${c}</div>
+    </div>`).join("");
+  document.querySelectorAll(".ck").forEach(el=>{
+    el.onclick = ()=>{
+      const i = +el.dataset.i;
+      checked.has(i) ? checked.delete(i) : checked.add(i);
+      renderRules();
+    };
+  });
+
+  if(!$("details").dataset.done){
+    $("details").innerHTML = DETAILS.map(([h,items])=>
+      `<details><summary>${h}</summary><ul>${items.map(x=>`<li>${x}</li>`).join("")}</ul></details>`).join("");
+    $("details").dataset.done = "1";
+  }
+}
+$("ckreset").onclick = ()=>{ checked = new Set(); renderRules(); };
+
+/* ===== Result buttons + live preview ===== */
 function finalPL(){
   const amt = Math.abs(parseFloat($("pl").value) || 0);
   return resultSel === "Win" ? amt : resultSel === "Loss" ? -amt : 0;
@@ -144,7 +347,7 @@ document.querySelectorAll(".res button").forEach(b=>{
 });
 $("pl").oninput = updatePreview;
 
-// Tags
+/* ===== Tags ===== */
 function renderTags(){
   $("tags").innerHTML = "";
   TAGS.forEach(t=>{
@@ -161,7 +364,7 @@ function renderTags(){
 }
 $("plan").onchange = ()=> $("tagbox").classList.toggle("hide", $("plan").checked);
 
-// Save
+/* ===== Save ===== */
 $("save").onclick = ()=>{
   if(!resultSel){ alert("សូមជ្រើស ឈ្នះ / ខាត / BE ជាមុន"); return; }
   const pl = finalPL();
@@ -178,10 +381,11 @@ $("save").onclick = ()=>{
   selTags = []; resultSel = null;
   $("plan").checked = true; $("tagbox").classList.add("hide");
   $("date").value = nowLocal(); renderTags(); updatePreview();
+  checked = new Set();
   show("history");
 };
 
-// History
+/* ===== History ===== */
 function renderHistory(){
   const box = $("p-history");
   if(!trades.length){ box.innerHTML = '<p class="sub" style="text-align:center;padding:32px">មិនទាន់មាន trade</p>'; return; }
@@ -202,7 +406,7 @@ function renderHistory(){
 function esc(s){ return String(s).replace(/[&<>"]/g, c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c])); }
 function del(id){ if(confirm("លុប trade នេះ?")){ trades = trades.filter(t=>t.id!==id); persist(); renderHistory(); } }
 
-// Stats
+/* ===== Stats ===== */
 function renderStats(){
   const n = trades.length;
   const pct = x => n ? Math.round(x/n*100) : 0;
@@ -226,7 +430,7 @@ function renderStats(){
     <div class="sub">ចំណាំ៖ រាប់តែ tag ពី trade ដែលមិនតាម Plan។</div>`;
 }
 
-// Export CSV
+/* ===== Export CSV ===== */
 function exportCSV(){
   const head = ["date","session","direction","entry","sl","tp","lot","result","pl","emotion","followedPlan","tags","lesson"];
   const q = v => '"' + String(v).replace(/"/g,'""') + '"';
@@ -236,9 +440,11 @@ function exportCSV(){
   a.href = URL.createObjectURL(blob); a.download = "trade-journal.csv"; a.click();
 }
 
+/* ===== ចាប់ផ្តើម៖ បើកទំព័រវិន័យមុន ===== */
 $("date").value = nowLocal();
 renderTags();
 updatePreview();
+showPage("rules");
 </script>
 </body>
 </html>
